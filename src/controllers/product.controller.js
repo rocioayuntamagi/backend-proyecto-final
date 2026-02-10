@@ -26,21 +26,32 @@ const createProduct = async (req, res) => {
   }
 }
 
-const updateProduct = async (id, updates) => {
+const updateProduct = async (req, res) => {
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true })
-    return { success: true, data: updatedProduct }
+    const id = req.params.id
+    const updatedProduct = await Product.findByIdAndUpdate(id)
+    if (!updatedProduct) {
+      return res.status(404).json({ success: false, error: "no existe el producto para actualizar" })
+    }
+    res.json({ success: true, data: updatedProduct })
   } catch (error) {
-    return { success: false, error: error.message }
+    return res.status(500).json({ success: false, error: error.message })
   }
 }
 
-const deleteProduct = async (id) => {
+const deleteProduct = async (req, res) => {
   try {
+    const id = req.params.id
     const deletedProduct = await Product.findByIdAndDelete(id)
-    return { success: true, data: deletedProduct }
+    if (!deletedProduct) {
+      return res.status(404).json({ success: false, error: "no existe el producto para borrar" })
+    }
+    res.json({ success: true, data: deletedProduct })
   } catch (error) {
-    return { success: false, error: error.message }
+    if (error.kind === "ObjectId") {
+      return res.status(400).json({ success: false, error: "ID incorrecto, ingresa un valor valido" })
+    }
+    res.status(500).json({ success: false, error: error.message })
   }
 }
 

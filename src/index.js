@@ -12,6 +12,7 @@ serverHttp.use(express.json())
 serverHttp.use("/products", productRouter)
 serverHttp.use("/auth", authRouter)
 
+// error 404
 serverHttp.use((req, res) => {
   res.status(404).json({ success: false, error: "el recurso no se encuentra" })
 })
