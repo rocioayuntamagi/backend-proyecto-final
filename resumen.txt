@@ -1,0 +1,52 @@
+API publica : es lo que tenemos construido a la fecha.
+
+Cualquier persona, cualquier usuario o cualquier origen de la peticion hacia 
+ésta API puede implementar cualquiera de las acciones del CRUD.
+Todas las peticiones son resueltas con exito, xq por ahora no estoy validando
+nada. 
+
+Una API es un sistema backend para administrar informacion. De base esa API siempre
+sera publica, para que asi no sea se incorpora validaciones.
+
+ACCIONES que ya conocemos:
+crear - leer - actualizar - borrar -> cuando la API es publica siempre
+permite que se realicen dichas acciones.
+
+Una API privada seria tener una web en la cual yo debo decirle quien soy.
+Para realizar dicha API debemos pasar por un proceso de validación.
+
+Para leer los productos, se podria hacer sin ningun problema ya que no poseo informacion
+sensible, pero para las demas acciones se deberá preguntar con clave de acceso.
+Eso es en éste caso especifico, ya que asi es nuestra lógica de negocio.
+Diferente sería si, por ejemplo, pediriamos poder ver las transferencias del usuario con el ID "X"
+Ya que, esta informacion si seria sensible y no deberia ser publica.
+
+La lógica del negocio es  la decision que existe con respecto a lo que yo hago con mis datos.
+
+Para comenzar a crear esto, generamos un sistema de registros de usuarios,
+asi generar una lista de usuarios autenticados (el famoso LOGIN)
+
+Definimos la ruta y el método:
+
+* POST 
+
+* http://localhost:50000/auth/login
+
+y
+
+* POST
+
+* http://localhost:50000/auth/register
+
+auth-> viene de authorization.
+
+Más adelante vamos a utilizar una libreria llamada ZOD, la cual sirve para
+validar inputs basada en typescript.
+
+Para ir finalizando la clase, podemos ver un problema con la contraseña de
+cada usuario, ya que la misma esta guardada en texto plano o legible, 
+las cuales se encuentran expuestas.
+Las contraseñas de Hash, el cual es un string encriptado que enmascara el
+texto plano.
+Para realizar dicho encriptado, vamos a utilizar la libreria 
+BCRYPTJS, la cual toma el texto plano y encripta el valor 10 veces
