@@ -3,13 +3,20 @@ import cors from "cors"
 import { connectDb } from "./config/mongodb.js"
 import { productRouter } from "./routes/productsRouter.js"
 import { authRouter } from "./routes/authRouter.js"
+import { authMiddleware } from "./middleware/authMiddleware.js"
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const serverHttp = express()
 
+// middleware
 serverHttp.use(cors())
 serverHttp.use(express.json())
 
-serverHttp.use("/products", productRouter)
+// GET - http://localhost:50000/products
+
+serverHttp.use("/products", authMiddleware, productRouter)
 serverHttp.use("/auth", authRouter)
 
 // error 404
@@ -17,7 +24,7 @@ serverHttp.use((req, res) => {
   res.status(404).json({ success: false, error: "el recurso no se encuentra" })
 })
 
-const PORT = 50000
+const PORT = process.env.PORT
 
 // 0 - 65656
 serverHttp.listen(PORT, () => {

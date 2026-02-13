@@ -1,11 +1,11 @@
-// el controlador resuelve LA LÓGICA DE NEGOCIO
-// toma el input del usuario
-// sanitiza los datos
-// responde al usuario (éxito o de no éxito)
-
 import { User } from "../models/user.model.js"
 import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
+dotenv.config()
+
+const JWT_SECRET = process.env.JWT_SECRET
+const JWT_EXPIRES = process.env.JWT_EXPIRES
 
 const register = async (req, res) => {
   try {
@@ -24,18 +24,25 @@ const register = async (req, res) => {
     }
 
     if (password.length < 4) {
-      return res.status(400).json({ success: false, error: "la contraseña debe contar al menos con 4 caracteres" })
+      return res.status(400).json({ success: false, error: "la contraseña debe contar al menos con 5 caracteres" })
     }
 
     const hash = await bcryptjs.hash(password, 10)
 
     const newDataUser = {
-      email: email,
+      email,
       password: hash
     }
 
     const newUser = await User.create(newDataUser)
-    res.status(201).json({ success: true, data: newUser })
+
+    res.status(201).json({
+      success: true, data: {
+        _id: newUser._id,
+        username: newUser.username,
+        email: newUser.email
+      }
+    })
   } catch (error) {
     if (error.code === 11000) {
       return res.status(400).json({ success: false, error: "Email ya existente en nuestra base de datos" })
@@ -54,6 +61,7 @@ const login = async (req, res) => {
     }
 
     const foundUser = await User.findOne({ email })
+
     if (!foundUser) {
       return res.status(401).json({ success: false, error: "desautorizado" })
     }
@@ -69,7 +77,9 @@ const login = async (req, res) => {
     // Un token es una llave digital o un fragmento de información que sirve para autenticar y autorizar a un usuario en sistemas digitales
 
     const payload = { _id: foundUser._id, username: foundUser.username, email: foundUser.email }
-    const token = jwt.sign(payload, "contraseñasupersegura", { expiresIn: "10s" })
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES })
+
     res.json({ success: true, data: token })
   } catch (error) {
     res.status(500).json({ success: false, error: error.message })

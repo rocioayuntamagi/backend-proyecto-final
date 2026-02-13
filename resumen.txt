@@ -1,27 +1,72 @@
-Cuando hacemos controles de errores, tenemos que saber que los mismos
-tienen, un nombre, un mensaje y un status.
+CREDENCIALES:
 
-Para logearnos, debemos hacer que nuestro sistema backend nos reconozca.
-En un paso a paso lo podemos pensar asi: 
-1° Registrarnos
-2° Loguearnos (hacer que el backend nos reconozca)
-3° Generar un "cupon" con vencimiento
-4° Ocupar el "cupon" para manipular la data
+Cuando hablamos de credenciales tenemos que tener en cuenta que las mismas poseen 
+informacion super sensible, las cuales no deben estar expuestas en el codigo ya que
+seria muy facil que nos hackeen.
+Por ello existen las variables de entorno, las cuales no estan directamente en el 
+codigo sino que se inyectan. Quiere decir que eso sucede solo una vez que se los
+pone en marcha, y se las coloca por fuera del codigo.
 
-Los tres primeros pasos son los que vamos a generar con la autenticacion
+La informacion sensible de nuestro backend seria:
+- un puerto - port
+- una iuridb - uri_db
+- jsonwetoken - jws_secret
 
-Cuando existe un fallo a nivel de sistema, nunca decimos porque eso falla
-al momento de controlar los errores, simplemente decimos desautorizado.
+Las variables de entorno vienen desde afuera del backend. Por ello,
+creamos el archivo .env, que significa enviroments, son credenciales del
+entorno de ejecucion, del ambiente de ejecucion. 
 
-La data que poseen los tokens no se encuentra encriptada, sino que se
-encuentra cifrada. 
-La diferencia entre encriptada y cifrada es que, al cifrar tengo la data 
-publica, tengo esa informacion pero se trabaja para que se procese mejor.
-Para poder utilizar dicho token, necesitamos descargar una libreria llamada 
-jsonwetoken.
-Cuando la buscamos en la web, podemos observar que esta compuesto por tres 
-partes; una parte verde, una blanca y una azul.
-La parte verde nos da la informacion de como se genero este token (algoritmo utilizado)
-La parte blanca tiene lo que se llama PAYLOAD, lo cual quiere decir "carga util"
-lo usamos para mostrar la informacion del usuario logeado.
-La parte azul es el JWT secret, lo cual quiere decir que es una clave secreta 
+Recordemos que estos archivos, que tienen un punto delante, son archivos
+de configuracion (locales). En este caso, guardan variables, con nombre y valor.
+
+
+Por ejemplo:
+PORT=8963
+URI_DB=mongodb://localhost:8963/utn
+JWT_SECRET=HAJKFAHSKJFAHKDHASJKDHA
+(estas se pueden conseguir en google en contraseñas para aplicaciones ó 
+desde consola, le escribo crypto.randomUUID () y me devuelve la contraseña)
+
+Para poder utilizar dichas variables nativas, debemos en el codigo index.js
+colocar: process.loadEnvFile() en donde practicamente le estamos diciendo que 
+traiga la informacion de .env a nuestro proyecto, ésta es la forma nativa de forma local.
+
+Como nosotros lo vamos a subir a internet, necesitamos utilizar una nueva biblioteca
+llamada dotenv. La instalamos, la importamos y la utilizamos en el codigo: dotenv.config()
+Para que toda esta informacion no se suba a internet, debo ignorar el archivo en la carpeta git.ignore
+agregando todo lo que deseo ignorar.
+Ahora, es importante que el que vaya a utiliar el programa sepa la info que tiene que 
+utilizar, para ello se creo la carpeta .env.example la cual es solo para decir que informacion
+necesita un servidor pero sin especificar o definir cada una.
+
+Plan de desarrollo para conectar nuestro front con nuestro backend:
+1°-> Crear un proyecto de React
+2°-> Definir el patron de diseño (arquitecrura)
+3°-> Crear las paginas estaticas
+4°-> Crear un enrrutador (xq react es una app de una sola pagina y no conoce 
+como manejar las rutas del navegador)
+5°-> Obtener la lista de productos 
+6°-> Aplicar CRUD 
+7°-> Aplicar autenticacion
+
+Todos estos pasos los vamos a realizar en nuestro FRONTEND. 
+Para ello, vamos a borrar todo lo que ya teniamos de nuestro front para crear uno nuevo.
+Vamos a la carpeta donde vamos a tener el proyecto front y abrimos 
+Open GIT bush here- y dentro de esa consola escribimos:
+npm create vite@latest . (el punto indica que lo vamos a crear en esa carpeta,
+sino te crea otra carpeta aparte).
+Luego, le decimos que el proyecto sera React, que lo vamos a crear con Javascript
+al resto le ponemos que no, y al final colocamos:
+code . (con esto le pedimos que lo ejecute en el visual studio)
+Y listo, tenemos nuestro proyecto react para frontend.
+
+Ahora, tenemos que instalar todas las dependencias con el comando:
+npm install
+Asi nos crea la carpeta node-moduls
+
+1° paso ✅
+
+Para el siguiente paso, vamos a crear las carpetas que necesitaremos, 
+de forma manual o con la terminal-ADJUNTAR FOTO CAPTURA
+
+

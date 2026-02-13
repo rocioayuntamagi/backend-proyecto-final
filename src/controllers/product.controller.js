@@ -5,7 +5,8 @@ const getProducts = async (req, res) => {
     const products = await Product.find().sort({ _id: -1 })
     res.json({ sucess: true, data: products })
   } catch (error) {
-    res.status(500).json({ success: false, error: "Error al traer los productos" })
+    console.log(error)
+    res.status(500).json({ success: false, error: error.message })
   }
 }
 
@@ -29,10 +30,14 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const id = req.params.id
-    const updatedProduct = await Product.findByIdAndUpdate(id)
+    const updates = req.body
+
+    const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true })
+
     if (!updatedProduct) {
       return res.status(404).json({ success: false, error: "no existe el producto para actualizar" })
     }
+
     res.json({ success: true, data: updatedProduct })
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message })
